@@ -1,0 +1,36 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserModel {
+  id: ID!
+  fullName: String!
+  email: String!
+  role: String!
+}
+
+type AuthResponseModel {
+  accessToken: String!
+  user: UserModel!
+}
+
+type Query {
+  users: [UserModel!]!
+}
+
+type Mutation {
+  register(input: RegisterInput!): AuthResponseModel!
+  login(input: LoginInput!): AuthResponseModel!
+}
+
+input RegisterInput {
+  fullName: String!
+  email: String!
+  password: String!
+  role: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}

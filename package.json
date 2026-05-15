@@ -1,0 +1,17 @@
+{
+  "name": "traffic-urban-system",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start:gateway": "cd api-gateway && npm run start:dev",
+    "start:auth": "cd auth-service && npm run start:dev",
+    "start:vehicle": "cd vehicle-service && npm run start:dev",
+    "start:traffic": "cd traffic-service && npm run start:dev",
+    "start:incident": "cd incident-service && npm run start:dev",
+    "start:notification": "cd notification-service && npm run start:dev",
+    "start:dev": "concurrently \"npm run start:gateway\" \"npm run start:auth\" \"npm run start:vehicle\" \"npm run start:traffic\" \"npm run start:incident\" \"npm run start:notification\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}

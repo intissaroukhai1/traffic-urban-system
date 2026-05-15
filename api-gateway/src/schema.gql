@@ -1,0 +1,139 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserModel {
+  id: ID!
+  fullName: String!
+  email: String!
+  role: String!
+}
+
+type AuthResponseModel {
+  accessToken: String!
+  user: UserModel!
+}
+
+type GpsPositionModel {
+  id: ID!
+  latitude: Float!
+  longitude: Float!
+  timestamp: String!
+}
+
+type VehicleModel {
+  id: ID!
+  plateNumber: String!
+  type: String!
+  status: String!
+  positions: [GpsPositionModel!]
+}
+
+type TrafficZoneModel {
+  id: ID!
+  name: String!
+  location: String!
+  vehicleCount: Int!
+  density: Int!
+  level: String!
+  congested: Boolean!
+}
+
+type IncidentModel {
+  id: ID!
+  type: String!
+  description: String!
+  location: String!
+  status: String!
+  createdAt: String!
+}
+
+type NotificationModel {
+  id: ID!
+  title: String!
+  message: String!
+  isRead: Boolean!
+  createdAt: String!
+}
+
+type Query {
+  users: [UserModel!]!
+  vehicles: [VehicleModel!]!
+  vehicle(id: Int!): VehicleModel!
+  vehicleHistory(vehicleId: Int!): [GpsPositionModel!]!
+  trafficZones: [TrafficZoneModel!]!
+  trafficZone(id: Int!): TrafficZoneModel!
+  congestedZones: [TrafficZoneModel!]!
+  incidents: [IncidentModel!]!
+  incident(id: Int!): IncidentModel!
+  notifications: [NotificationModel!]!
+  notification(id: Int!): NotificationModel!
+}
+
+type Mutation {
+  register(input: RegisterInput!): AuthResponseModel!
+  login(input: LoginInput!): AuthResponseModel!
+  createVehicle(input: CreateVehicleInput!): VehicleModel!
+  addGpsPosition(input: CreateGpsPositionInput!): GpsPositionModel!
+  createTrafficZone(input: CreateTrafficZoneInput!): TrafficZoneModel!
+  updateTrafficDensity(input: UpdateTrafficDensityInput!): TrafficZoneModel!
+  createIncident(input: CreateIncidentInput!): IncidentModel!
+  updateIncidentStatus(input: UpdateIncidentStatusInput!): IncidentModel!
+  createNotification(input: CreateNotificationInput!): NotificationModel!
+  markNotificationAsRead(input: MarkNotificationReadInput!): NotificationModel!
+}
+
+input RegisterInput {
+  fullName: String!
+  email: String!
+  password: String!
+  role: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input CreateVehicleInput {
+  plateNumber: String!
+  type: String!
+  status: String! = "ACTIVE"
+}
+
+input CreateGpsPositionInput {
+  vehicleId: Int!
+  latitude: Float!
+  longitude: Float!
+}
+
+input CreateTrafficZoneInput {
+  name: String!
+  location: String!
+  vehicleCount: Int!
+}
+
+input UpdateTrafficDensityInput {
+  zoneId: Int!
+  vehicleCount: Int!
+}
+
+input CreateIncidentInput {
+  type: String!
+  description: String!
+  location: String!
+}
+
+input UpdateIncidentStatusInput {
+  incidentId: Int!
+  status: String!
+}
+
+input CreateNotificationInput {
+  title: String!
+  message: String!
+}
+
+input MarkNotificationReadInput {
+  notificationId: Int!
+}
