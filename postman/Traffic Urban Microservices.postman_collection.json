@@ -1,0 +1,754 @@
+{
+	"info": {
+		"_postman_id": "4f89eca0-7117-4247-9dac-f3314393c373",
+		"name": "Traffic Urban Microservices",
+		"description": "Postman collection for REST microservices and GraphQL API Gateway.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29219075",
+		"_collection_link": "https://solar-moon-487189.postman.co/workspace/work~21860db5-f269-405b-8985-d58615ac9fa7/collection/29219075-4f89eca0-7117-4247-9dac-f3314393c373?action=share&source=collection_link&creator=29219075"
+	},
+	"item": [
+		{
+			"name": "01 - Auth Service REST",
+			"item": [
+				{
+					"name": "Register Admin REST",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Admin User\",\n  \"email\": \"admin@test.com\",\n  \"password\": \"123456\",\n  \"role\": \"ADMIN\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{authServiceUrl}}/auth/register",
+							"host": [
+								"{{authServiceUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register Operator REST",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Operator User\",\n  \"email\": \"operator@test.com\",\n  \"password\": \"123456\",\n  \"role\": \"OPERATOR\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{authServiceUrl}}/auth/register",
+							"host": [
+								"{{authServiceUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Admin REST",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"if (jsonData.accessToken) {",
+									"  pm.collectionVariables.set('token', jsonData.accessToken);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@test.com\",\n  \"password\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{authServiceUrl}}/auth/login",
+							"host": [
+								"{{authServiceUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users REST",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{authServiceUrl}}/users",
+							"host": [
+								"{{authServiceUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "02 - API Gateway GraphQL",
+			"item": [
+				{
+					"name": "GraphQL Register Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"if (jsonData?.data?.login?.accessToken) {",
+									"  pm.collectionVariables.set('token', jsonData.data.login.accessToken);",
+									"}",
+									"if (jsonData?.data?.register?.accessToken) {",
+									"  pm.collectionVariables.set('token', jsonData.data.register.accessToken);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\n  register(input: {\n    fullName: \"Admin Gateway\"\n    email: \"admin.gateway@test.com\"\n    password: \"123456\"\n    role: \"ADMIN\"\n  }) {\n    accessToken\n    user { id fullName email role }\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{gatewayUrl}}",
+							"host": [
+								"{{gatewayUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GraphQL Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"if (jsonData?.data?.login?.accessToken) {",
+									"  pm.collectionVariables.set('token', jsonData.data.login.accessToken);",
+									"}",
+									"if (jsonData?.data?.register?.accessToken) {",
+									"  pm.collectionVariables.set('token', jsonData.data.register.accessToken);",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\n  login(input: {\n    email: \"admin.gateway@test.com\"\n    password: \"123456\"\n  }) {\n    accessToken\n    user { id fullName email role }\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{gatewayUrl}}",
+							"host": [
+								"{{gatewayUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GraphQL Users",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\n  users { id fullName email role }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{gatewayUrl}}",
+							"host": [
+								"{{gatewayUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GraphQL Create Vehicle - Future",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation {\n  createVehicle(input: {\n    plateNumber: \"TU-1234\"\n    type: \"Bus\"\n    status: \"ACTIVE\"\n  }) {\n    id plateNumber type status\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{gatewayUrl}}",
+							"host": [
+								"{{gatewayUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GraphQL Vehicles - Future",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\n  vehicles { id plateNumber type status }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{gatewayUrl}}",
+							"host": [
+								"{{gatewayUrl}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "03 - Vehicle Service REST - Future",
+			"item": [
+				{
+					"name": "Create Vehicle REST",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"plateNumber\": \"TU-1234\",\n  \"type\": \"Bus\",\n  \"status\": \"ACTIVE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{vehicleServiceUrl}}/vehicles",
+							"host": [
+								"{{vehicleServiceUrl}}"
+							],
+							"path": [
+								"vehicles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Vehicles REST",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{vehicleServiceUrl}}/vehicles",
+							"host": [
+								"{{vehicleServiceUrl}}"
+							],
+							"path": [
+								"vehicles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Vehicle By ID REST",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{vehicleServiceUrl}}/vehicles/1",
+							"host": [
+								"{{vehicleServiceUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add GPS Position REST",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"vehicleId\": 1,\n  \"latitude\": 36.8065,\n  \"longitude\": 10.1815\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{vehicleServiceUrl}}/vehicles/gps",
+							"host": [
+								"{{vehicleServiceUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"gps"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Vehicle History REST",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{vehicleServiceUrl}}/vehicles/1/history",
+							"host": [
+								"{{vehicleServiceUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"1",
+								"history"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "04 - Traffic Service REST - Future",
+			"item": [
+				{
+					"name": "Create Traffic Zone REST",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Zone Centre Ville\",\n  \"location\": \"Tunis Centre\",\n  \"vehicleCount\": 85\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{trafficServiceUrl}}/traffic-zones",
+							"host": [
+								"{{trafficServiceUrl}}"
+							],
+							"path": [
+								"traffic-zones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Traffic Zones REST",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{trafficServiceUrl}}/traffic-zones",
+							"host": [
+								"{{trafficServiceUrl}}"
+							],
+							"path": [
+								"traffic-zones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Traffic Density REST",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"zoneId\": 1,\n  \"vehicleCount\": 25\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{trafficServiceUrl}}/traffic-zones/density",
+							"host": [
+								"{{trafficServiceUrl}}"
+							],
+							"path": [
+								"traffic-zones",
+								"density"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Congested Zones REST",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{trafficServiceUrl}}/traffic-zones/congested",
+							"host": [
+								"{{trafficServiceUrl}}"
+							],
+							"path": [
+								"traffic-zones",
+								"congested"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "05 - Incident Service REST - Future",
+			"item": [
+				{
+					"name": "Create Incident REST",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"type\": \"ACCIDENT\",\n  \"description\": \"Accident pres du centre-ville\",\n  \"location\": \"Tunis Centre\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{incidentServiceUrl}}/incidents",
+							"host": [
+								"{{incidentServiceUrl}}"
+							],
+							"path": [
+								"incidents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Incidents REST",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{incidentServiceUrl}}/incidents",
+							"host": [
+								"{{incidentServiceUrl}}"
+							],
+							"path": [
+								"incidents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Incident Status REST",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"incidentId\": 1,\n  \"status\": \"EN_COURS\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{incidentServiceUrl}}/incidents/status",
+							"host": [
+								"{{incidentServiceUrl}}"
+							],
+							"path": [
+								"incidents",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "06 - Notification Service REST - Future",
+			"item": [
+				{
+					"name": "Create Notification REST",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Nouvel incident\",\n  \"message\": \"Un accident a ete signale dans la zone Centre Ville.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{notificationServiceUrl}}/notifications",
+							"host": [
+								"{{notificationServiceUrl}}"
+							],
+							"path": [
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Notifications REST",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{notificationServiceUrl}}/notifications",
+							"host": [
+								"{{notificationServiceUrl}}"
+							],
+							"path": [
+								"notifications"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Notification As Read REST",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"notificationId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{notificationServiceUrl}}/notifications/read",
+							"host": [
+								"{{notificationServiceUrl}}"
+							],
+							"path": [
+								"notifications",
+								"read"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "gatewayUrl",
+			"value": "http://localhost:3000/graphql"
+		},
+		{
+			"key": "authServiceUrl",
+			"value": "http://localhost:3001"
+		},
+		{
+			"key": "vehicleServiceUrl",
+			"value": "http://localhost:3002"
+		},
+		{
+			"key": "trafficServiceUrl",
+			"value": "http://localhost:3003"
+		},
+		{
+			"key": "incidentServiceUrl",
+			"value": "http://localhost:3004"
+		},
+		{
+			"key": "notificationServiceUrl",
+			"value": "http://localhost:3005"
+		},
+		{
+			"key": "token",
+			"value": "YOUR_ACCESS_TOKEN_HERE"
+		}
+	]
+}
