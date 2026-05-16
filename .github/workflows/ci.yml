@@ -4,15 +4,17 @@ on:
   push:
     branches:
       - main
+      - feature-branch
   pull_request:
     branches:
       - main
 
 jobs:
-  backend-and-frontend-ci:
+  build:
     runs-on: ubuntu-latest
 
     strategy:
+      fail-fast: false
       matrix:
         project:
           - api-gateway
@@ -40,6 +42,30 @@ jobs:
         working-directory: ${{ matrix.project }}
         run: npm run build
 
-      - name: Run tests if available
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - traffic-service
+          - incident-service
+          - notification-service
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
         working-directory: ${{ matrix.project }}
-        run: npm test -- --passWithNoTests
+        run: npm install
+
+      - name: Run unit tests
+        working-directory: ${{ matrix.project }}
+        run: npm run test
