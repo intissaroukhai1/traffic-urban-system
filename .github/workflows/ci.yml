@@ -1,0 +1,45 @@
+name: Traffic Urban System CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  backend-and-frontend-ci:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        project:
+          - api-gateway
+          - auth-service
+          - vehicle-service
+          - traffic-service
+          - incident-service
+          - notification-service
+          - dashboard-frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.project }}
+        run: npm install
+
+      - name: Build project
+        working-directory: ${{ matrix.project }}
+        run: npm run build
+
+      - name: Run tests if available
+        working-directory: ${{ matrix.project }}
+        run: npm test -- --passWithNoTests
