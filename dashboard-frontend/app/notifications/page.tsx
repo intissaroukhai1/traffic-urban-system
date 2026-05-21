@@ -101,75 +101,81 @@ export default function NotificationsPage() {
           />
 
           <section className="space-y-6 p-6">
-            <div className="grid gap-6 xl:grid-cols-2">
-              {isAdmin ? (
-                <form
-                  onSubmit={handleCreateNotification}
-                  className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
-                >
-                  <h3 className="text-lg font-semibold text-slate-950">
-                    Create notification
-                  </h3>
+          <div className="grid gap-6 xl:grid-cols-2">
+  {isAdmin ? (
+    <form
+      onSubmit={handleCreateNotification}
+      className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+    >
+      <h3 className="text-lg font-semibold text-slate-950">
+        Create notification
+      </h3>
 
-                  <div className="mt-5 grid gap-4">
-                    <input
-                      value={title}
-                      onChange={(event) => setTitle(event.target.value)}
-                      placeholder="Title"
-                      className="rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-slate-950"
-                      required
-                    />
+      <div className="mt-5 grid gap-4">
+        <input
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+          placeholder="Title"
+          className="rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-slate-950"
+          required
+        />
 
-                    <textarea
-                      value={messageText}
-                      onChange={(event) => setMessageText(event.target.value)}
-                      placeholder="Message"
-                      className="min-h-28 rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-slate-950"
-                      required
-                    />
+        <textarea
+          value={messageText}
+          onChange={(event) => setMessageText(event.target.value)}
+          placeholder="Message"
+          className="min-h-28 rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-slate-950"
+          required
+        />
 
-                    <button
-                      disabled={creating}
-                      className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60"
-                    >
-                      {creating ? "Creating..." : "Create notification"}
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <div className="rounded-3xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-800">
-                  You are connected as OPERATOR. You can view notifications and
-                  mark them as read, but cannot create new notifications.
-                </div>
-              )}
+        <button
+          disabled={creating}
+          className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60"
+        >
+          {creating ? "Creating..." : "Create notification"}
+        </button>
+      </div>
+    </form>
+  ) : (
+    <div className="rounded-3xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-800">
+      You are connected as OPERATOR. You can view notifications and mark them as read,
+      but cannot create new notifications.
+    </div>
+  )}
 
-              <form
-                onSubmit={handleMarkAsRead}
-                className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
-              >
-                <h3 className="text-lg font-semibold text-slate-950">
-                  Mark notification as read
-                </h3>
+  {!isAdmin ? (
+    <form
+      onSubmit={handleMarkAsRead}
+      className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+    >
+      <h3 className="text-lg font-semibold text-slate-950">
+        Mark notification as read
+      </h3>
 
-                <div className="mt-5 grid gap-4">
-                  <input
-                    value={notificationId}
-                    onChange={(event) => setNotificationId(event.target.value)}
-                    type="number"
-                    placeholder="Notification ID"
-                    className="rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-slate-950"
-                    required
-                  />
+      <div className="mt-5 grid gap-4">
+        <input
+          value={notificationId}
+          onChange={(event) => setNotificationId(event.target.value)}
+          type="number"
+          placeholder="Notification ID"
+          className="rounded-2xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-slate-950"
+          required
+        />
 
-                  <button
-                    disabled={marking}
-                    className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60"
-                  >
-                    {marking ? "Updating..." : "Mark as read"}
-                  </button>
-                </div>
-              </form>
-            </div>
+        <button
+          disabled={marking}
+          className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60"
+        >
+          {marking ? "Updating..." : "Mark as read"}
+        </button>
+      </div>
+    </form>
+  ) : (
+    <div className="rounded-3xl border border-blue-200 bg-blue-50 p-6 text-sm text-blue-800">
+      ADMIN creates notifications. Operators can mark them as read after reading them.
+    </div>
+  )}
+</div>
 
             {message && (
               <div className="rounded-3xl border border-slate-200 bg-white p-5 text-sm text-slate-700">

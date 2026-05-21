@@ -23,74 +23,67 @@ type VehicleMapProps = {
 };
 
 const defaultIcon = new L.Icon({
-  iconUrl:
-    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   iconRetinaUrl:
     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  shadowUrl:
-    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41],
 });
 
-function getLatestPosition(vehicle: Vehicle): GpsPosition | null {
-  if (!vehicle.positions || vehicle.positions.length === 0) {
-    return null;
-  }
-
-  return [...vehicle.positions].sort(
-    (a, b) =>
-      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-  )[0];
-}
-
 export default function VehicleMap({ vehicles }: VehicleMapProps) {
-  const vehiclesWithPositions = vehicles
-    .map((vehicle) => ({
+  const markers = vehicles.flatMap((vehicle) =>
+    (vehicle.positions ?? []).map((position, index) => ({
       vehicle,
-      latestPosition: getLatestPosition(vehicle),
+      position,
+      index,
     }))
-    .filter((item) => item.latestPosition !== null);
+  );
+
+  function getMarkerPosition(latitude: number, longitude: number, index: number) {
+    const offset = index * 0.0003;
+
+    return [latitude + offset, longitude + offset] as [number, number];
+  }
 
   return (
     <MapContainer
       center={[36.8065, 10.1815]}
-      zoom={12}
+      zoom={13}
       scrollWheelZoom
       className="h-[600px] w-full rounded-3xl"
     >
       <TileLayer
-        attribution='&copy; OpenStreetMap contributors'
+        attribution="&copy; OpenStreetMap contributors"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      {vehiclesWithPositions.map(({ vehicle, latestPosition }) => {
-        if (!latestPosition) return null;
-
-        return (
-          <Marker
-            key={vehicle.id}
-            position={[latestPosition.latitude, latestPosition.longitude]}
-            icon={defaultIcon}
-          >
-            <Popup>
-              <div className="space-y-1">
-                <p className="font-semibold">{vehicle.plateNumber}</p>
-                <p>Type: {vehicle.type}</p>
-                <p>Status: {vehicle.status}</p>
-                <p>Latitude: {latestPosition.latitude}</p>
-                <p>Longitude: {latestPosition.longitude}</p>
-                <p>
-                  Time:{" "}
-                  {new Date(latestPosition.timestamp).toLocaleString()}
-                </p>
-              </div>
-            </Popup>
-          </Marker>
-        );
-      })}
+      {markers.map(({ vehicle, position, index }) => (
+        <Marker
+          key={`${vehicle.id}-${position.id}`}
+          position={getMarkerPosition(
+            position.latitude,
+            position.longitude,
+            index
+          )}
+          icon={defaultIcon}
+        >
+          <Popup>
+            <div className="space-y-1">
+              <p className="font-semibold">{vehicle.plateNumber}</p>
+              <p>Vehicle ID: {vehicle.id}</p>
+              <p>Type: {vehicle.type}</p>
+              <p>Status: {vehicle.status}</p>
+              <p>Position ID: {position.id}</p>
+              <p>Latitude: {position.latitude}</p>
+              <p>Longitude: {position.longitude}</p>
+              <p>Time: {new Date(position.timestamp).toLocaleString()}</p>
+            </div>
+          </Popup>
+        </Marker>
+      ))}
     </MapContainer>
   );
 }

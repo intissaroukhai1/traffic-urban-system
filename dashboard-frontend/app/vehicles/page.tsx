@@ -3,12 +3,14 @@
 import Header from "@/components/Header";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Sidebar from "@/components/Sidebar";
+import Link from "next/link";
 import {
   ADD_GPS_POSITION,
   CREATE_VEHICLE,
   GET_VEHICLES,
 } from "@/graphql/vehicles";
-import { getUser } from "@/lib/auth";
+import { getUser ,logout } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { FormEvent, useEffect, useState } from "react";
 
@@ -66,6 +68,38 @@ function Field({
     </div>
   );
 }
+function SelectField({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: string[];
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
+        {label}
+      </label>
+
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        required
+        className="rounded-xl border border-white/[0.08] bg-white/[0.04] px-3.5 py-2.5 text-[13px] text-slate-200 outline-none transition focus:border-blue-500/50 focus:bg-white/[0.07]"
+      >
+        {options.map((option) => (
+          <option key={option} value={option} className="bg-[#111827] text-white">
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
 
 /* ─── Panel wrapper ──────────────────────────────────────────── */
 
@@ -109,6 +143,12 @@ function PanelTitle({
 /* ─── Main Page ──────────────────────────────────────────────── */
 
 export default function VehiclesPage() {
+  const router = useRouter();
+
+function handleLogout() {
+  logout();
+  router.replace("/login");
+}
   const { data, loading, error, refetch } = useQuery<VehiclesResponse>(GET_VEHICLES);
   const [createVehicle, { loading: creating }] = useMutation(CREATE_VEHICLE);
   const [addGpsPosition, { loading: addingGps }] = useMutation(ADD_GPS_POSITION);
@@ -196,6 +236,25 @@ export default function VehiclesPage() {
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: "currentColor" }} />
                 {isAdmin ? "Admin" : "Opérateur"}
               </div>
+              <button
+  onClick={handleLogout}
+  className="flex items-center gap-1.5 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-[11.5px] font-medium text-red-400 transition hover:bg-red-500/20 hover:text-red-300"
+>
+  <svg
+    className="h-3.5 w-3.5"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+    <polyline points="16 17 21 12 16 7" />
+    <line x1="21" y1="12" x2="9" y2="12" />
+  </svg>
+  Logout
+</button>
             </div>
           </header>
 
@@ -250,10 +309,39 @@ export default function VehiclesPage() {
                 </PanelTitle>
 
                 <form onSubmit={handleCreateVehicle}>
-                  <div className="grid gap-4 md:grid-cols-4">
-                    <Field label="Plaque" value={plateNumber} onChange={setPlateNumber} placeholder="TN-123-ABC" />
-                    <Field label="Type" value={type} onChange={setType} placeholder="Bus, Taxi…" />
-                    <Field label="Statut" value={status} onChange={setStatus} placeholder="ACTIVE" />
+                  <div className="grid gap-4 md:grid-cols-4"><Field
+  label="Immatriculation"
+  value={plateNumber}
+  onChange={setPlateNumber}
+  placeholder="TN-123-ABC"
+/>
+
+<SelectField
+  label="Type"
+  value={type}
+  onChange={setType}
+  options={[
+  "Bus",
+  "Taxi",
+  "Metro",
+  "Ambulance",
+  "Police",
+  "Tramway",
+  "Minibus",
+  "Camion",
+  "Moto",
+  "Voiture municipale",
+  "Dépanneuse",
+  "Camion pompier","voiture"
+]}
+/>
+
+<SelectField
+  label="Statut"
+  value={status}
+  onChange={setStatus}
+  options={["ACTIVE", "INACTIVE", "MAINTENANCE"]}
+/>
                     <div className="flex flex-col justify-end">
                       <button
                         disabled={creating}
@@ -367,7 +455,7 @@ export default function VehiclesPage() {
                   <table className="w-full text-left text-[12.5px]">
                     <thead>
                       <tr className="border-b border-white/[0.06] bg-white/[0.03]">
-                        {["ID", "Plaque", "Type", "Statut"].map((h) => (
+                        {["ID", "Immatriculation", "Type", "Statut", "Action"].map((h) => (
                           <th key={h} className="px-4 py-3 font-mono text-[10px] uppercase tracking-[0.12em] font-medium text-slate-500">
                             {h}
                           </th>
@@ -392,6 +480,14 @@ export default function VehiclesPage() {
                           <td className="px-4 py-3">
                             <StatusBadge status={v.status} />
                           </td>
+                          <td className="px-4 py-3">
+  <Link
+    href={`/vehicles/${v.id}`}
+    className="rounded-lg border border-blue-500/20 bg-blue-500/10 px-3 py-1.5 text-[11px] font-medium text-blue-400 transition hover:bg-blue-500/20"
+  >
+    Details
+  </Link>
+</td>
                         </tr>
                       ))}
 

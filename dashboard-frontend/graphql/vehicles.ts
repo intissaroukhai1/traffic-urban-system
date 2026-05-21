@@ -27,6 +27,22 @@ export const GET_VEHICLES_WITH_POSITIONS = gql`
     }
   }
 `;
+export const GET_VEHICLE_BY_ID = gql`
+  query GetVehicleById($id: Int!) {
+    vehicle(id: $id) {
+      id
+      plateNumber
+      type
+      status
+      positions {
+        id
+        latitude
+        longitude
+        timestamp
+      }
+    }
+  }
+`;
 
 export const CREATE_VEHICLE = gql`
   mutation CreateVehicle(

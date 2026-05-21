@@ -3,6 +3,8 @@
 import Header from "@/components/Header";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Sidebar from "@/components/Sidebar";
+import { useRouter } from "next/navigation";
+import { logout } from "@/lib/auth";
 import { GET_VEHICLES } from "@/graphql/vehicles";
 import { GET_TRAFFIC_ZONES } from "@/graphql/traffic";
 import { GET_INCIDENTS } from "@/graphql/incidents";
@@ -129,11 +131,43 @@ function ServiceRow({ name }: { name: string }) {
 /* ─── Main Page ──────────────────────────────────────────────── */
 
 export default function AdminDashboardPage() {
-  const { data: vehiclesData,      loading: l1 } = useQuery<VehiclesResponse>(GET_VEHICLES);
-  const { data: trafficData,       loading: l2 } = useQuery<TrafficZonesResponse>(GET_TRAFFIC_ZONES);
-  const { data: incidentsData,     loading: l3 } = useQuery<IncidentsResponse>(GET_INCIDENTS);
-  const { data: notificationsData, loading: l4 } = useQuery<NotificationsResponse>(GET_NOTIFICATIONS);
+  const router = useRouter();
 
+function handleLogout() {
+  logout();
+  router.replace("/login");
+}
+  const {
+  data: vehiclesData,
+  loading: l1,
+  refetch: refetchVehicles,
+} = useQuery<VehiclesResponse>(GET_VEHICLES);
+
+const {
+  data: trafficData,
+  loading: l2,
+  refetch: refetchTraffic,
+} = useQuery<TrafficZonesResponse>(GET_TRAFFIC_ZONES);
+
+const {
+  data: incidentsData,
+  loading: l3,
+  refetch: refetchIncidents,
+} = useQuery<IncidentsResponse>(GET_INCIDENTS);
+
+const {
+  data: notificationsData,
+  loading: l4,
+  refetch: refetchNotifications,
+} = useQuery<NotificationsResponse>(GET_NOTIFICATIONS);
+async function handleRefresh() {
+  await Promise.all([
+    refetchVehicles(),
+    refetchTraffic(),
+    refetchIncidents(),
+    refetchNotifications(),
+  ]);
+}
   const loading = l1 || l2 || l3 || l4;
 
   const vehicleCount       = vehiclesData?.vehicles?.length ?? 0;
@@ -163,12 +197,43 @@ export default function AdminDashboardPage() {
                 </svg>
                 Temps réel
               </span>
-              <button className="flex items-center gap-1.5 rounded-lg border border-white/[0.08] px-3 py-1.5 text-[11.5px] font-medium text-slate-400 transition hover:bg-white/[0.05] hover:text-slate-200">
-                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="23 4 23 10 17 10" /><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" />
-                </svg>
-                Actualiser
-              </button>
+              <button
+  onClick={handleRefresh}
+  className="flex items-center gap-1.5 rounded-lg border border-white/[0.08] px-3 py-1.5 text-[11.5px] font-medium text-slate-400 transition hover:bg-white/[0.05] hover:text-slate-200"
+>
+  <svg
+    className="h-3.5 w-3.5"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="23 4 23 10 17 10" />
+    <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" />
+  </svg>
+  Actualiser
+</button>
+              <button
+  onClick={handleLogout}
+  className="flex items-center gap-1.5 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-1.5 text-[11.5px] font-medium text-red-400 transition hover:bg-red-500/20 hover:text-red-300"
+>
+  <svg
+    className="h-3.5 w-3.5"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+    <polyline points="16 17 21 12 16 7" />
+    <line x1="21" y1="12" x2="9" y2="12" />
+  </svg>
+  Logout
+</button>
               {unreadCount > 0 && (
                 <div className="relative">
                   <button className="flex items-center rounded-lg border border-white/[0.08] p-1.5 text-slate-400 transition hover:bg-white/[0.05]">
